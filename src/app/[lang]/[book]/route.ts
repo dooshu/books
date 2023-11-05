@@ -1,30 +1,39 @@
 import a from "@/components/a"
 import { promises as fs } from 'fs';
-import { useParams } from "next/navigation"
+import getJson from "./json";
 
-export async function GET(request: Request, params:any) {
-  const lang = params.params.lang
-  const book = params.params.book
+export async function GET(request: Request, {params}:any) {
+  const lang = params.lang
+  const book = params.book
   const [bookid, bookext] = book.split('.')
+  //const { searchParams } = new URL(request.url)
 
   const filepath = process.cwd()+'/public/'+lang+'/'+bookid+'.txt'
   const file = await fs.readFile(filepath, 'utf8')
 
-  if(bookext === 'json'){
-    const json = require('./json')
-    const j = json.getJson(file, bookid)
-    fs.writeFile(process.cwd()+'/public/'+lang+'/'+bookid+'.json', j)
 
+  //if(bookext === 'json'){
+    if(bookid){
+      const j = await getJson(file, bookid)
+    //fs.writeFile(process.cwd()+'/public/'+lang+'/'+bookid+'.json', j)
+
+    //return new Response(JSON.stringify(j))
     return new Response(j)
   }
 
-
-
-  return new Response(file)
-
-
+  return new Response(file.slice(0, file.indexOf('\n\n')))
 }
 
 
 
-
+function testJSON(text:any) {
+  if (typeof text !== "string") {
+      return false;
+  }
+  try {
+      JSON.parse(text);
+      return true;
+  } catch (error) {
+      return false;
+  }
+}
