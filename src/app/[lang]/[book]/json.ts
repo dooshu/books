@@ -5,10 +5,13 @@ export default function getJson(file: string, bookid: number) {
   const chapters: string[] = file.slice(0, position).split("\n");
   position = file.indexOf("\nÁÁÁÁÁÁÁÁÁÁ：doosho.com", position)
   let continuing:number[] = []
+  let startnumber:number[] = []
   if(position > 0){
     position =  position+22
     continuing = file.substring(position, file.indexOf("\n\n", position)).replace(/\s/g, "").split('，').map(Number)
-    console.log(file.substring(position, file.indexOf("\n\n", position)).replace(/\s/g, ""))
+    position = file.indexOf("\nББББББББББ：doosho.com", position)
+    position =  position+22
+    startnumber = file.substring(position, file.indexOf("\n\n", position)).replace(/\s/g, "").split('，').map(Number)
   }else{
     position = file.indexOf("\n\n")
   }
@@ -51,6 +54,7 @@ export default function getJson(file: string, bookid: number) {
       if(level in continuing){
         levelcount[level] = 1
       }
+      if(startnumber[i-1])levelcount[level] = startnumber[i-1]
     }
 
     let item = {
