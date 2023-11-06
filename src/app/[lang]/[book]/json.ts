@@ -4,14 +4,18 @@ export default function getJson(file: string, bookid: number) {
   let position = file.indexOf("\n\n")
   const chapters: string[] = file.slice(0, position).split("\n");
   position = file.indexOf("\nÁÁÁÁÁÁÁÁÁÁ：doosho.com", position)
-  let continuing:number[] = []
-  let startnumber:number[] = []
+  let continuing:number[] = []  // 哪一级菜单编号是连续的，比如如果包含2，侧第二部第五回、第三部则是从第六回开始
+  let startnumber:number[] = [] // 编号从多少开始，黑夜是1，比如[1，1，2019]，第三级菜单从2019开始
+  let openlevel:number[] = [] // 哪一级菜单标记 open:true
   if(position > 0){
     position =  position+22
     continuing = file.substring(position, file.indexOf("\n\n", position)).replace(/\s/g, "").split('，').map(Number)
     position = file.indexOf("\nББББББББББ：doosho.com", position)
     position =  position+22
     startnumber = file.substring(position, file.indexOf("\n\n", position)).replace(/\s/g, "").split('，').map(Number)
+    position = file.indexOf("\nĆĆĆĆĆĆĆĆĆĆ：doosho.com", position)
+    position =  position+22
+    openlevel = file.substring(position, file.indexOf("\n\n", position)).replace(/\s/g, "").split('，').map(Number)
   }else{
     position = file.indexOf("\n\n")
   }
@@ -40,10 +44,19 @@ export default function getJson(file: string, bookid: number) {
   for (let i = 0; i < chapters.length; i++) {
     const chapter = chapters[i];
     const level = chapter.search(/(?!　)/);
+    position = file.indexOf('\n'+chapter.trim()+'\n', position)
+
+    let item:any = {
+      slug: "/cn",
+      title: chapter,
+      position: position,
+      length: 0,
+      id: i,
+      pid: 0,
+    };
     if (!levelcount[level]) levelcount[level] = 0;
     levelcount[level]++;
 
-    position = file.indexOf('\n'+chapter.trim()+'\n', position)
     if(i<chapters.length-1){
       nextposition = file.indexOf('\n'+chapters[i+1].trim()+'\n', position+chapter.length)
     }else{
@@ -52,23 +65,20 @@ export default function getJson(file: string, bookid: number) {
 
     if (level === oldlevel + 1) {
       if(continuing.includes(level)){
-        console.log(continuing+'...'+level)
         levelcount[level] = 1
       }
       if(startnumber[i-1]){
-        console.log(startnumber[i-1])
         levelcount[level] = startnumber[i-1]
+      }
+      if(openlevel.includes(level)){
+        console.log(level)
+        item['open'] = true
       }
     }
 
-    let item = {
-      slug: "/cn/" + bookid + "/" + levelcount.slice(1, level+1).join("/"),
-      title: chapter,
-      position: position,
-      length: nextposition-position,
-      id: i,
-      pid: 0,
-    };
+    item.slug = "/cn/" + bookid + "/" + levelcount.slice(1, level+1).join("/")
+    item.length = nextposition - position
+    
 
     if(position < 0){
       return 'wrong'+chapter + `　　第${i+1}行`
@@ -107,6 +117,7 @@ function getTrees(allchapter:any, pid = 0) {
     return allchapter.filter((item:any) => item.pid === pid).map((item:any) => {
       // 通过父节点ID查询所有子节点
       let a:any = { slug: item.slug, title: item.title.trim(), position:item.position, length:item.length }
+      if(item.open)a.open=item.open
       const n = getTrees(allchapter, item.id)
       n == false ? '' : a.child = n
       return a
