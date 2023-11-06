@@ -51,10 +51,14 @@ export default function getJson(file: string, bookid: number) {
     }
 
     if (level === oldlevel + 1) {
-      if(level in continuing){
+      if(continuing.includes(level)){
+        console.log(continuing+'...'+level)
         levelcount[level] = 1
       }
-      if(startnumber[i-1])levelcount[level] = startnumber[i-1]
+      if(startnumber[i-1]){
+        console.log(startnumber[i-1])
+        levelcount[level] = startnumber[i-1]
+      }
     }
 
     let item = {
