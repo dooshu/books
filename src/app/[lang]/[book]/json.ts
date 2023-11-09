@@ -11,17 +11,21 @@ export default function getJson(file: string, bookid: number) {
   }
   position = file.indexOf("\nÁÁÁÁÁÁÁÁÁÁ：doosho.com", position)
   let continuing:number[] = []  // 哪一级菜单编号是连续的，比如如果包含2，侧第二部第五回、第三部则是从第六回开始
-  let startnumber:number[] = [] // 编号从多少开始，黑夜是1，比如[1，1，2019]，第三级菜单从2019开始
+  //let startnumber:number[] = [] // 编号从多少开始，默认是1，比如[1，1，2019]，第三级菜单从2019开始
   let openlevel:number[] = [] // 哪一级菜单标记 open:true
+  let initialnumber:string[] = [] // 父级别-父编号-子初始值，比如1-2019-7为第一级编号为2019时，子级从7开始
   if(position > 0){
     position =  position+22
     continuing = file.substring(position, file.indexOf("\n\n", position)).replace(/\s/g, "").split('，').map(Number)
     position = file.indexOf("\nББББББББББ：doosho.com", position)
     position =  position+22
-    startnumber = file.substring(position, file.indexOf("\n\n", position)).replace(/\s/g, "").split('，').map(Number)
-    position = file.indexOf("\nĆĆĆĆĆĆĆĆĆĆ：doosho.com", position)
-    position =  position+22
+    // startnumber = file.substring(position, file.indexOf("\n\n", position)).replace(/\s/g, "").split('，').map(Number)
+    // position = file.indexOf("\nĆĆĆĆĆĆĆĆĆĆ：doosho.com", position)
+    // position =  position+22
     openlevel = file.substring(position, file.indexOf("\n\n", position)).replace(/\s/g, "").split('，').map(Number)
+    position = file.indexOf("\ĎĎĎĎĎĎĎĎĎĎ：doosho.com", position)
+    position =  position+22
+    initialnumber = file.substring(position, file.indexOf("\n\n", position)).replace(/\s/g, "").split('，')
   }else{
     position = file.indexOf("\n\n")
   }
@@ -49,7 +53,8 @@ export default function getJson(file: string, bookid: number) {
 
   for (let i = 0; i < chapters.length; i++) {
     const chapter = chapters[i];
-    const level = chapter.search(/(?!　)/);
+    //const level = chapter.search(/(?!　)/);
+    const level = chapter.search(/[^　]/);
     position = file.indexOf('\n'+chapter.trim()+'\n', position)
 
     let item:any = {
@@ -73,11 +78,21 @@ export default function getJson(file: string, bookid: number) {
       if(continuing.includes(level)){
         levelcount[level] = 1
       }
-      if(startnumber[i-1]){
-        levelcount[level] = startnumber[i-1]
-      }
+      initialnumber.map(v=>{
+        const renow = v.split('-').map(Number)
+        const parentlevel = renow[0]
+        const parentindex = renow[1]
+        const childfirstnumber = renow[2]
+
+        if(parentlevel===level-1 && parentindex===levelcount[level-1]){
+          levelcount[level] = childfirstnumber
+        }
+      })
+
+      // if(startnumber[i-1]){
+      //   levelcount[level] = startnumber[i-1]
+      // }
       if(openlevel.includes(level)){
-        console.log(level)
         item['open'] = true
       }
     }
