@@ -1,8 +1,14 @@
 
 　//👉　{start:2019}
 export default function getJson(file: string, bookid: number) {
+  if(/\r/.test(file)){
+    return 'wrong \\r\\n to \\n'
+  }
   let position = file.indexOf("\n\n")
   const chapters: string[] = file.slice(0, position).split("\n");
+  if(chapters.length < 3 || chapters[1][0] !== '　'){
+    return 'wrong 没有目录'
+  }
   position = file.indexOf("\nÁÁÁÁÁÁÁÁÁÁ：doosho.com", position)
   let continuing:number[] = []  // 哪一级菜单编号是连续的，比如如果包含2，侧第二部第五回、第三部则是从第六回开始
   let startnumber:number[] = [] // 编号从多少开始，黑夜是1，比如[1，1，2019]，第三级菜单从2019开始
