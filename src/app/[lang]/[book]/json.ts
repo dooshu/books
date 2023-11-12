@@ -52,10 +52,10 @@ export default function getJson(file: string, bookid: number) {
   }
 
   for (let i = 0; i < chapters.length; i++) {
-    const chapter = chapters[i];
+    const chapter = chapters[i].trim();
     //const level = chapter.search(/(?!　)/);
-    const level = chapter.search(/[^　]/);
-    position = file.indexOf('\n'+chapter.trim()+'\n', position)
+    const level = chapters[i].search(/[^　]/);
+    position = file.indexOf('\n'+chapter+'\n', position)
 
     let item:any = {
       slug: "/cn",
