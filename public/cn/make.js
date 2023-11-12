@@ -60,11 +60,13 @@ const aaa = `
 
 
 
-for(i=227; i<582; i++){
+for(i=177; i<582; i++){
     if([250, 284].includes(i))continue
     const data = fs.readFileSync(i+'.txt', 'utf8');
 
-    [chapters, contents] = data.split('\n\n')
+    const bookname = data.substring(0, data.indexOf('\n'))
+    const chapters = data.substring(0, data.indexOf('\n\n'))
+    const contents = data.substring(data.indexOf('\n\n'))
 
-    fs.writeFileSync(i+'a.txt', chapters+'\n\n\n\n\n'+aaa+chapters(0, chapters.indexOf('\n'))+'\n\n\n'+contents)
+    fs.writeFileSync(i+'.txt', chapters+'\n\n\n\n\n'+aaa+bookname+'\n\n\n'+contents)
 }
