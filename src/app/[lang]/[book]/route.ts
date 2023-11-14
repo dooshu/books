@@ -9,7 +9,15 @@ export async function GET(request: Request, {params}:any) {
   //const { searchParams } = new URL(request.url)
 
   const filepath = process.cwd()+'/public/'+lang+'/'+bookid+'.txt'
-  const file = await fs.readFile(filepath, 'utf8')
+  const file = await fs.readFile(filepath, 'utf8').then(async v=>{
+    if(/\r/.test(v)){
+      const tmpdata = v.replaceAll('\r\n', '\n')
+      await fs.writeFile(filepath, tmpdata)
+      return tmpdata
+    }
+    return v
+  })
+
 
 
   //if(bookext === 'json'){

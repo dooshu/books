@@ -3,6 +3,7 @@
 export default function getJson(file: string, bookid: number) {
   if(/\r/.test(file)){
     return 'wrong \\r\\n to \\n'
+    file = file.replaceAll('\r\n', '\n')
   }
   let position = file.indexOf("\n\n")
   const chapters: string[] = file.slice(0, position).split("\n");
