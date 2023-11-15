@@ -60,8 +60,8 @@ const aaa = `
 
 
 
-for(i=35; i<582; i++){
-    if([250, 284].includes(i))continue
+for(i=35; i<83; i++){
+    if([].includes(i))continue
     const data = fs.readFileSync(i+'.txt', 'utf8');
 
     const bookname = data.substring(0, data.indexOf('\n'))
