@@ -1,6 +1,6 @@
 
 　//👉　{start:2019}
-export default function getJson(file: string, bookid: number) {
+export default function getJson(file:string, lang:string, bookid:number) {
   if(/\r/.test(file)){
     return 'wrong \\r\\n to \\n'
     file = file.replaceAll('\r\n', '\n')
@@ -37,7 +37,7 @@ export default function getJson(file: string, bookid: number) {
   position = file.indexOf('\n'+chapters[0].trim()+'\n', 0)
   let nextposition = file.indexOf('\n'+chapters[1].trim()+'\n', position)
   const result = {
-    slug: "/cn/" + bookid,
+    slug: "/"+lang+"/" + bookid,
     title: chapters[0],
     position: position,
     length: nextposition - position,
@@ -59,7 +59,7 @@ export default function getJson(file: string, bookid: number) {
     position = file.indexOf('\n'+chapter+'\n', position)
 
     let item:any = {
-      slug: "/cn",
+      slug: "/"+lang,
       title: chapter,
       position: position,
       length: 0,
@@ -98,7 +98,7 @@ export default function getJson(file: string, bookid: number) {
       }
     }
 
-    item.slug = "/cn/" + bookid + "/" + levelcount.slice(1, level+1).join("/")
+    item.slug = "/"+lang+"/" + bookid + "/" + levelcount.slice(1, level+1).join("/")
     item.length = nextposition - position
     
 

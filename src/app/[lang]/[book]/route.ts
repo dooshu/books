@@ -22,7 +22,7 @@ export async function GET(request: Request, {params}:any) {
 
   //if(bookext === 'json'){
     if(bookid){
-      const j = await getJson(file, bookid)
+      const j = await getJson(file, lang, bookid)
     //fs.writeFile(process.cwd()+'/public/'+lang+'/'+bookid+'.json', j)
 
     //return new Response(JSON.stringify(j))

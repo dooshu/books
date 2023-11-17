@@ -12,7 +12,7 @@ export async function GET(request: Request, {params}:any) {
   const file = await fs.readFile(filepath, 'utf8')
 
   //return new Response(file.substring(position, parseInt(position)+parseInt(length)).trim())
-  return new Response(file.slice(position, parseInt(position)+parseInt(length)).trim())
+  return new Response(file.slice(position, parseInt(position)+parseInt(length)).trimStart())
 }
 
 
