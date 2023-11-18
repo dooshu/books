@@ -13,11 +13,11 @@ jobs:
 
     # 第一步：下载源码（CI/CD拉取代码到自己的本地）
     - name: Checkout
-      uses: actions/checkout@main
+      uses: actions/checkout@master
 
     # 第二步：打包构建
     - name: Build
-      uses: actions/setup-node@main
+      uses: actions/setup-node@master
     - run: npm install # 安装第三方包
     - run: npm run build # 打包
     - run: tar -zcvf release.tgz .nuxt static nuxt.config.js package.json package-lock.json pm2.config.json
@@ -26,7 +26,7 @@ jobs:
     # 第三步：发布 Release
     - name: Create Release # 创建Release，可以在仓库看到一个个版本
       id: create_release
-      uses: actions/create-release@main
+      uses: actions/create-release@master
       env:
         GITHUB_TOKEN: ${{ secrets.BOOKS_DEPLOY }} # 之前GitHub添加的Token
       with:
@@ -38,7 +38,7 @@ jobs:
     # 第四步：上传构建结果到 Release（把打包的tgz上传到Release）
     - name: Upload Release Asset
       id: upload-release-asset
-      uses: actions/upload-release-asset@main
+      uses: actions/upload-release-asset@master
       env:
         GITHUB_TOKEN: ${{ secrets.BOOKS_DEPLOY }}
       with:
@@ -49,7 +49,7 @@ jobs:
 
     # 第五步：部署到服务器
     - name: Deploy
-      uses: appleboy/ssh-action@main # 使用ssh链接服务器
+      uses: appleboy/ssh-action@master # 使用ssh链接服务器
       with:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USERNAME }}
